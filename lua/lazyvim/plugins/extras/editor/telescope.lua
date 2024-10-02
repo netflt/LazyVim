@@ -92,15 +92,16 @@ return {
       },
       { "<leader>/", LazyVim.pick("live_grep"), desc = "Grep (Root Dir)" },
       { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
-      { "<leader><space>", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
+      --{ "<leader><space>", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
+      { "<leader><space>", ":", desc = "Switch to Command mode" },
       -- find
       { "<leader>fb", "<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>", desc = "Buffers" },
       { "<leader>fc", LazyVim.pick.config_files(), desc = "Find Config File" },
-      { "<leader>ff", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
-      { "<leader>fF", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
-      { "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
-      { "<leader>fR", LazyVim.pick("oldfiles", { cwd = vim.uv.cwd() }), desc = "Recent (cwd)" },
+      { "<leader>sf", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
+      { "<leader>sF", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
+      { "<leader>sg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
+      { "<leader>.", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
+      --{ "<leader>fR", LazyVim.pick("oldfiles", { cwd = vim.uv.cwd() }), desc = "Recent (cwd)" },
       -- git
       { "<leader>gc", "<cmd>Telescope git_commits<CR>", desc = "Commits" },
       { "<leader>gs", "<cmd>Telescope git_status<CR>", desc = "Status" },
@@ -112,8 +113,8 @@ return {
       { "<leader>sC", "<cmd>Telescope commands<cr>", desc = "Commands" },
       { "<leader>sd", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Document Diagnostics" },
       { "<leader>sD", "<cmd>Telescope diagnostics<cr>", desc = "Workspace Diagnostics" },
-      { "<leader>sg", LazyVim.pick("live_grep"), desc = "Grep (Root Dir)" },
-      { "<leader>sG", LazyVim.pick("live_grep", { root = false }), desc = "Grep (cwd)" },
+      --{ "<leader>sg", LazyVim.pick("live_grep"), desc = "Grep (Root Dir)" },
+      --{ "<leader>sG", LazyVim.pick("live_grep", { root = false }), desc = "Grep (cwd)" },
       { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help Pages" },
       { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Search Highlight Groups" },
       { "<leader>sj", "<cmd>Telescope jumplist<cr>", desc = "Jumplist" },
@@ -251,27 +252,6 @@ return {
       opts.defaults = vim.tbl_deep_extend("force", opts.defaults or {}, {
         mappings = { n = { s = flash }, i = { ["<c-s>"] = flash } },
       })
-    end,
-  },
-
-  -- better vim.ui with telescope
-  {
-    "stevearc/dressing.nvim",
-    lazy = true,
-    enabled = function()
-      return LazyVim.pick.want() == "telescope"
-    end,
-    init = function()
-      ---@diagnostic disable-next-line: duplicate-set-field
-      vim.ui.select = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
-        return vim.ui.select(...)
-      end
-      ---@diagnostic disable-next-line: duplicate-set-field
-      vim.ui.input = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
-        return vim.ui.input(...)
-      end
     end,
   },
 

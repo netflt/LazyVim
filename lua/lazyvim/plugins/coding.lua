@@ -23,7 +23,7 @@ return {
       vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
       local cmp = require("cmp")
       local defaults = require("cmp.config.default")()
-      local auto_select = true
+      local auto_select = false 
       return {
         auto_brackets = {}, -- configure any filetype to auto add brackets
         completion = {
@@ -36,7 +36,7 @@ return {
           ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
           ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
           ["<C-Space>"] = cmp.mapping.complete(),
-          ["<CR>"] = LazyVim.cmp.confirm({ select = auto_select }),
+          ["<CR>"] = LazyVim.cmp.confirm({ select = true }),
           ["<C-y>"] = LazyVim.cmp.confirm({ select = true }),
           ["<S-CR>"] = LazyVim.cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
           ["<C-CR>"] = function(fallback)
@@ -154,63 +154,4 @@ return {
     opts = {},
   },
 
-  -- Better text-objects
-  {
-    "echasnovski/mini.ai",
-    event = "VeryLazy",
-    opts = function()
-      local ai = require("mini.ai")
-      return {
-        n_lines = 500,
-        custom_textobjects = {
-          o = ai.gen_spec.treesitter({ -- code block
-            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-          }),
-          f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), -- function
-          c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), -- class
-          t = { "<([%p%w]-)%f[^<%w][^<>]->.-</%1>", "^<.->().*()</[^/]->$" }, -- tags
-          d = { "%f[%d]%d+" }, -- digits
-          e = { -- Word with case
-            { "%u[%l%d]+%f[^%l%d]", "%f[%S][%l%d]+%f[^%l%d]", "%f[%P][%l%d]+%f[^%l%d]", "^[%l%d]+%f[^%l%d]" },
-            "^().*()$",
-          },
-          i = LazyVim.mini.ai_indent, -- indent
-          g = LazyVim.mini.ai_buffer, -- buffer
-          u = ai.gen_spec.function_call(), -- u for "Usage"
-          U = ai.gen_spec.function_call({ name_pattern = "[%w_]" }), -- without dot in function name
-        },
-      }
-    end,
-    config = function(_, opts)
-      require("mini.ai").setup(opts)
-      LazyVim.on_load("which-key.nvim", function()
-        vim.schedule(function()
-          LazyVim.mini.ai_whichkey(opts)
-        end)
-      end)
-    end,
-  },
-
-  {
-    "folke/lazydev.nvim",
-    ft = "lua",
-    cmd = "LazyDev",
-    opts = {
-      library = {
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
-        { path = "LazyVim", words = { "LazyVim" } },
-        { path = "lazy.nvim", words = { "LazyVim" } },
-      },
-    },
-  },
-  -- Manage libuv types with lazy. Plugin will never be loaded
-  { "Bilal2453/luvit-meta", lazy = true },
-  -- Add lazydev source to cmp
-  {
-    "hrsh7th/nvim-cmp",
-    opts = function(_, opts)
-      table.insert(opts.sources, { name = "lazydev", group_index = 0 })
-    end,
-  },
 }
